@@ -171,7 +171,7 @@ Dalam proyek ini, digunakan dua pendekatan utama untuk membangun sistem rekomend
    
 Pendekatan ini kemudian digabungkan dalam sistem hybrid untuk meningkatkan akurasi dan fleksibilitas terhadap berbagai tipe pengguna (baru dan lama).
 
-###**1. Content-Based Filtering**
+### **1. Content-Based Filtering**
 
 Content-Based Filtering memberikan rekomendasi berdasarkan kesamaan konten film, khususnya genre dan tag. Sistem ini menggunakan representasi teks yang diekstraksi dari data genres dan tags.
 
