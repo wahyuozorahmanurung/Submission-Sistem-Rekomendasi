@@ -4,6 +4,8 @@
 
 ## Sistem Rekomendasi Movie (Film)
 
+## Project Overview
+
 ### Latar Belakang
 Dalam era digital saat ini, volume data yang dihasilkan oleh pengguna meningkat secara eksponensial, khususnya dalam industri hiburan seperti film dan televisi. Pengguna sering kali dihadapkan pada pilihan yang sangat banyak, sehingga mengalami kesulitan dalam menemukan konten yang sesuai dengan preferensi mereka. Untuk mengatasi permasalahan ini, sistem rekomendasi menjadi solusi penting dalam membantu pengguna mendapatkan saran yang relevan secara otomatis (Ricci et al., 2015). Sistem rekomendasi telah menjadi komponen utama dalam berbagai platform digital seperti Netflix, Amazon Prime, dan Disney+, karena terbukti mampu meningkatkan pengalaman pengguna dan keterlibatan mereka terhadap platform (Aggarwal, 2016). Dua pendekatan utama yang digunakan dalam pengembangan sistem rekomendasi adalah Content-Based Filtering dan Collaborative Filtering.
 
