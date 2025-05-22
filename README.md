@@ -405,4 +405,83 @@ Grafik menunjukkan RMSE model dari epoch 0 hingga 100, dengan garis biru untuk d
 Hasil keluaran ini menunjukkan rekomendasi film untuk pengguna dengan ID 182 berdasarkan rating film yang sudah pernah ditontonnya dan prediksi model untuk film-film yang belum ditonton. Bagian pertama menampilkan lima film favorit pengguna, yaitu film-film dengan rating tertinggi dari riwayat tontonan mereka, seperti *Casino (1995)* dan *Pulp Fiction (1994)*, lengkap dengan genre masing-masing.
 Bagian kedua menampilkan 10 film rekomendasi terbaik yang diprediksi model memiliki potensi disukai oleh pengguna tersebut. Film-film ini beragam dari genre animasi, komedi, drama, hingga dokumenter, seperti *Lesson Faust (1994)* dan *Tea with Mussolini (1999)*. Dengan daftar ini, pengguna bisa mendapatkan pilihan film baru yang sesuai dengan preferensi berdasarkan pola rating sebelumnya.
 
+**Evaluasi Terhadap Business Understanding**
 
+**Menjawab Problem Statement**
+
+   Dalam tahap pemahaman bisnis, tim pengembang telah mengidentifikasi tiga permasalahan utama (problem statements) yang sangat umum dihadapi dalam platform hiburan digital. Ketiga permasalahan ini tidak hanya  
+   realistis, tetapi juga strategis karena menyasar tantangan inti dari personalisasi konten untuk pengguna.
+
+  - Problem Statement 1:
+    "Bagaimana cara membantu pengguna menemukan film yang sesuai dengan preferensi mereka secara otomatis di tengah banyaknya pilihan film yang tersedia?"
+  
+     Permasalahan ini dijawab dengan mengimplementasikan metode Content-Based Filtering, yaitu pendekatan yang merekomendasikan film berdasarkan kesamaan genre dan tag dari film yang disukai sebelumnya. 
+     Teknologi   
+     yang digunakan: TF-IDF Vectorization dan Cosine Similarity untuk membandingkan kemiripan antar film.
+  
+     Contoh: Jika pengguna menyukai Jumanji (1995), maka sistem akan merekomendasikan film lain dengan genre yang serupa seperti The Chronicles of Narnia atau Harry Potter.
+
+  - Problem Statement 2:
+    "Bagaimana sistem rekomendasi dapat mengidentifikasi film yang relevan meskipun pengguna belum pernah menontonnya sebelumnya?"
+  
+    Masalah ini disebut sebagai cold-start problem untuk item dan berhasil diatasi dengan content-based filtering.Karena pendekatan ini tidak memerlukan data interaksi pengguna sebelumnya, sistem tetap dapat 
+    bekerja hanya dengan informasi konten dari film itu sendiri.
+
+  - Problem Statement 3:
+   "Bagaimana menggabungkan Content-Based dan Collaborative Filtering agar sistem rekomendasi menjadi lebih akurat dan responsif terhadap berbagai jenis pengguna (baru maupun lama)?"
+  
+   Jawaban atas masalah ini adalah implementasi sistem hybrid, di mana content-based digunakan untuk pengguna baru dan collaborative filtering untuk pengguna yang sudah memiliki riwayat. Ini memastikan bahwa 
+   sistem tetap bekerja optimal dalam berbagai kondisi pengguna.
+
+**Mencapai Goals**
+
+   Tujuan dari proyek ini disusun dengan jelas dan secara logis selaras dengan pernyataan masalah yang telah diidentifikasi sebelumnya. Evaluasi menunjukkan bahwa masing-masing tujuan telah tercapai dengan 
+   pendekatan teknis yang tepat.
+
+  - Goal 1:
+   "Mengembangkan sistem rekomendasi film yang mampu menyarankan film relevan berdasarkan kesamaan konten seperti genre, sinopsis, dan kata kunci."
+  
+    Dicapai dengan Content-Based Filtering, menggunakan TF-IDF pada data genre dan tag untuk membentuk representasi vektor konten.
+    Sistem mampu memberikan rekomendasi berdasarkan semantik tanpa memerlukan data rating pengguna.
+  
+  - Goal 2:
+   "Membangun sistem rekomendasi yang dapat menyarankan film baru berdasarkan perilaku pengguna lain yang serupa."
+  
+    Dicapai melalui Collaborative Filtering berbasis Matrix Factorization, dengan neural network sederhana berbasis embedding.
+    Model dipelajari dari dataset MovieLens dan menunjukkan hasil evaluasi yang solid (RMSE validasi sekitar 0.23).
+  
+ - Goal 3:
+  "Menggabungkan dua pendekatan tersebut untuk memperkuat performa sistem rekomendasi secara keseluruhan."
+  
+   Sistem hybrid dirancang dengan baik, memastikan rekomendasi tetap relevan baik untuk pengguna baru maupun lama.
+   Fleksibilitas ini penting untuk skalabilitas sistem di lingkungan nyata yang heterogen.
+
+**Dampak dari Solution Statement**
+
+  Setiap solusi teknis yang diusulkan memiliki kontribusi penting terhadap pencapaian tujuan dan penanganan masalah bisnis. Berikut analisis dampaknya:
+
+   a. Content-Based Filtering
+  
+   Kelebihan:
+   Tidak bergantung pada data rating, sehingga ideal untuk pengguna baru.
+   Memberikan rekomendasi yang dapat dijelaskan secara logis berdasarkan konten.
+   
+   Dampak:
+   Meningkatkan kenyamanan pengguna baru dalam menjelajahi konten yang sesuai dengan preferensi awal.
+   Mendorong eksplorasi katalog film dengan genre yang mirip.
+
+   b. Collaborative Filtering
+   Kelebihan:
+   Mampu mempelajari selera pengguna melalui pola rating dan interaksi.
+   Hasil rekomendasi lebih personal dan terkadang tak terduga (serendipity).
+   
+   Dampak:
+   Meningkatkan retensi pengguna lama karena mereka merasa sistem “memahami” preferensi mereka.
+
+## Kesimpulan
+
+Proyek sistem rekomendasi ini tidak hanya berhasil menjawab masalah bisnis yang kompleks, tetapi juga memberikan solusi yang scalable dan berdampak langsung terhadap peningkatan kualitas interaksi pengguna dengan platform hiburan digital. Kombinasi pendekatan content-based dan collaborative filtering menunjukkan kesiapan sistem ini untuk diimplementasikan dalam lingkungan produksi nyata.
+
+Proyek ini bertujuan untuk membangun sistem rekomendasi film yang mampu memberikan saran personal kepada pengguna berdasarkan preferensi mereka. Dalam upaya tersebut, dua pendekatan utama digunakan: Content-Based Filtering dan Collaborative Filtering. Dari sisi business understanding, proyek ini berhasil mengidentifikasi dan menjawab masalah utama yang dihadapi pengguna platform hiburan digital, yaitu kesulitan menemukan film yang sesuai di tengah banyaknya pilihan. Pendekatan content-based memungkinkan sistem memberikan rekomendasi kepada pengguna baru yang belum memiliki riwayat interaksi, sementara collaborative filtering efektif mempelajari pola pengguna lama melalui data rating.
+
+Secara teknis, proyek ini menggunakan metode TF-IDF dan cosine similarity untuk menghitung kemiripan antar film berdasarkan konten, serta matrix factorization berbasis neural network embedding untuk mempelajari relasi laten antara pengguna dan film. Evaluasi menggunakan Root Mean Squared Error (RMSE) menunjukkan bahwa model collaborative filtering mampu mencapai akurasi prediksi yang baik, dengan RMSE validasi yang stabil pada ~0.23.
