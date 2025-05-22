@@ -340,6 +340,7 @@ Collaborative Filtering menggunakan data rating dari pengguna lain untuk mempela
    overfitting. Hasil pelatihan disimpan di variabel `history` yang berisi catatan metrik seperti loss dan RMSE dari tiap epoch, sehingga bisa dianalisis lebih lanjut.
 
 **REKOMENDASI**
+
 memulai dengan membaca data rating film dan memilih secara acak satu pengguna (`user_id`). Kemudian, kode mengambil daftar film yang sudah ditonton oleh pengguna tersebut dan menentukan film yang belum ditonton dengan membandingkan semua film yang ada di dataset dengan film yang sudah dilihat oleh pengguna.
 
 Setelah itu, film yang belum ditonton diubah menjadi format encoded menggunakan peta `movie_to_movie_encoded`, dan `user_id` juga di-encode. Kode kemudian membuat array gabungan antara ID pengguna dan film yang belum ditonton dalam bentuk encoded, yang nantinya digunakan sebagai input untuk model rekomendasi dalam memprediksi film yang mungkin disukai pengguna.
