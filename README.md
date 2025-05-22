@@ -460,23 +460,23 @@ Bagian kedua menampilkan 10 film rekomendasi terbaik yang diprediksi model memil
 
   Setiap solusi teknis yang diusulkan memiliki kontribusi penting terhadap pencapaian tujuan dan penanganan masalah bisnis. Berikut analisis dampaknya:
 
-   a. Content-Based Filtering
+   - Content-Based Filtering
   
-   Kelebihan:
-   Tidak bergantung pada data rating, sehingga ideal untuk pengguna baru.
-   Memberikan rekomendasi yang dapat dijelaskan secara logis berdasarkan konten.
+     Kelebihan:
+     Tidak bergantung pada data rating, sehingga ideal untuk pengguna baru.
+     Memberikan rekomendasi yang dapat dijelaskan secara logis berdasarkan konten.
    
-   Dampak:
-   Meningkatkan kenyamanan pengguna baru dalam menjelajahi konten yang sesuai dengan preferensi awal.
-   Mendorong eksplorasi katalog film dengan genre yang mirip.
+     Dampak:
+     Meningkatkan kenyamanan pengguna baru dalam menjelajahi konten yang sesuai dengan preferensi awal.
+     Mendorong eksplorasi katalog film dengan genre yang mirip.
 
-   b. Collaborative Filtering
-   Kelebihan:
-   Mampu mempelajari selera pengguna melalui pola rating dan interaksi.
-   Hasil rekomendasi lebih personal dan terkadang tak terduga (serendipity).
+   - Collaborative Filtering
+     Kelebihan:
+     Mampu mempelajari selera pengguna melalui pola rating dan interaksi.
+     Hasil rekomendasi lebih personal dan terkadang tak terduga (serendipity).
    
-   Dampak:
-   Meningkatkan retensi pengguna lama karena mereka merasa sistem “memahami” preferensi mereka.
+     Dampak:
+     Meningkatkan retensi pengguna lama karena mereka merasa sistem “memahami” preferensi mereka.
 
 ## Kesimpulan
 
