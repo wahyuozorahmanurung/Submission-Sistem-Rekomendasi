@@ -44,11 +44,14 @@ Proyek ini menggunakan dataset dari Kaggle berjudul Movie Recommendation Data ya
 Dataset ini berasal dari MovieLens, salah satu dataset paling populer untuk membangun dan mengevaluasi sistem rekomendasi. Dataset ini terdiri dari beberapa file CSV yang memuat informasi film, rating pengguna, tag, serta metadata lainnya. Data ini mencerminkan kebiasaan pengguna dalam memberikan penilaian terhadap film dan memungkinkan pembelajaran preferensi pengguna.
 
 Jumlah Data
-- movies.csv : 9.742 data film
-- ratings.csv : 9724 data penilaian dari 610 pengguna
-- links.csv : 9.742 relasi antara MovieLens ID dan IMDb/ TMDb ID
-- tags.csv : 1.572 data tag (kata kunci) yang diberikan oleh pengguna
-- movies_metadata.csv : Metadata tambahan dari film (genre, sinopsis, dan lainnya)
+- movies.csv : 9.742 data baris dan 3 kolom film (tidak ada duplikat dan missing values)
+- ratings.csv : 9724 data baris dan 4 data kolom penilaian dari 610 pengguna (tidak ada duplikat dan missing values)
+- links.csv : 9.742 relasi baris dan 3 kolom antara MovieLens ID dan IMDb/ TMDb ID (tidak ada duplikat dan 8 missing values pada tmdbId )
+- tags.csv : 1.572 data baris dan 4 kolom tag (kata kunci) yang diberikan oleh pengguna (tidak ada duplikat dan missing values)
+- movies_metadata.csv : Metadata tambahan dari film (genre, sinopsis, dan lainnya) sebanyak 45436 baris dan 19 kolom
+  Mising values: belongs_to_collection	40972, homepage	37684, imdb_id	17, original_language	11, overview	954, popularity	5, poster_path	386, production_companies	3, production_countries	3, release_date	87, 
+  revenue	6, runtime	263, spoken_languages	6, status	87, tagline	25054, title	6, video	6, vote_average	6, vote_count	6 (tapi ini tidak digunakan di proyek saya)
+
 
 ### Variabel-variabel pada dataset adalah sebagai berikut:
 1. movies.csv
@@ -82,8 +85,14 @@ Menyediakan koneksi antara movieId dengan ID dari basis data film eksternal:
   - tmdbId: ID film di The Movie Database (TMDb).
 
 Beberapa tahapan eksplorasi data telah dilakukan untuk memahami karakteristik dataset, antara lain:
-- Cek Missing Vaues
-  
+**Cek Missing Vaues**
+ 1. Masing-Masing Data
+    
+    ![image](https://github.com/user-attachments/assets/d6483c51-f660-4931-a929-46bbcdb95c80)
+
+    Pada masing-masing data missing values hanya terdapat pada links.csv yaitu 8 missing values pada tmdbId
+
+ 2. Pada data merge movie
   ```python
    movie_info = pd.concat([links, movies, ratings, tags])
    movie = pd.merge(ratings, movie_info , on='movieId', how='left')
@@ -91,11 +100,18 @@ Beberapa tahapan eksplorasi data telah dilakukan untuk memahami karakteristik da
   ```
   ![image](https://github.com/user-attachments/assets/fe6d9d75-1ec0-40b4-9cb0-9f3436218764)
 
-Menggabungkan beberapa DataFrame (links, movies, ratings, tags) menjadi satu DataFrame bernama movie menggunakan pd.concat(). Kemudian, movie_info digabung lagi dengan ratings berdasarkan kolom movieId menggunakan pd.merge() dengan metode join kiri (how='left'). Hasil akhirnya adalah DataFrame movie yang berisi informasi rating yang telah dilengkapi dengan data tambahan dari links, movies, dan tags sesuai dengan movieId. Terlihat ada data yang masih NaN detail pada gambar dibawah ini 
+Pertama saya Menggabungkan beberapa DataFrame (links, movies, ratings, tags) menjadi satu DataFrame bernama movie menggunakan pd.concat(). Kemudian, movie_info digabung lagi dengan ratings berdasarkan kolom movieId menggunakan pd.merge() dengan metode join kiri (how='left'). Hasil akhirnya adalah DataFrame movie yang berisi informasi rating yang telah dilengkapi dengan data tambahan dari links, movies, dan tags sesuai dengan movieId. Terlihat ada data yang masih NaN detail pada gambar dibawah ini ketika di merge
 
   ![image](https://github.com/user-attachments/assets/509eadbb-2b4c-4a6d-8dd2-9ca0947d8edb)
 
-- cek duplicated pada movie
+**cek duplicated**
+ 1. Pada masing-masing data set
+
+  ![image](https://github.com/user-attachments/assets/4e1199a6-dbe8-44df-aaf8-5beca60150e4)
+
+  Pada masing-masing data set tidak terdapat data duplikat
+
+ 2. pada data merge movie
 
   ![image](https://github.com/user-attachments/assets/1b729596-acbf-49b9-a86a-c2e78b28f23a)
 
@@ -103,6 +119,9 @@ movie.duplicated().sum() menghitung jumlah baris duplikat dalam DataFrame movie,
 menampilkan detail baris-baris duplikat tersebut dan terlihat tidak ada duplikat
 
 ## Data Preparation
+
+### **Content Based Filtering**
+
 Data preparation sangat penting dalam pipeline machine learning karena memastikan data dalam kondisi bersih, terstruktur, dan siap digunakan oleh algoritma untuk pelatihan dan prediksi. Proses ini dilakukan secara bertahap dan sistematis agar menghasilkan model yang akurat dan dapat diinterpretasikan dengan baik.
 1. Mengatasi Missing Values
    - Mengisi semua kolom numerik yang kosong dengan median
@@ -127,7 +146,14 @@ Data preparation sangat penting dalam pipeline machine learning karena memastika
 
 ![image](https://github.com/user-attachments/assets/6d741ce9-e007-499d-b2dd-cdf32f95f4b3)
 
-3. Mengurutkan dataframe movie
+3. Merge Data
+   Melakukan penggabungan beberapa DataFrame untuk membentuk satu DataFrame movie yang berisi informasi lengkap tentang film
+   
+ - Gabungkan data movie dan links
+ - Gabungkan dengan tags
+ - Gabungkan dengan ratings
+   
+4. Mengurutkan dataframe movie
    
   Mengurutkan DataFrame movie berdasarkan kolom movieId secara ascending (dari kecil ke besar) dan menyimpan hasilnya ke variabel baru fix_movie. Setelah itu, ketika fix_movie dipanggil, akan menampilkan       
   DataFrame yang sudah terurut rapi berdasarkan movieId.
@@ -138,7 +164,7 @@ Data preparation sangat penting dalam pipeline machine learning karena memastika
 
 terlihat ada 9724 
 
-4. Mengoversi menjadi data list
+5. Mengoversi menjadi data list
    -  Mengonversi data series ‘movieId’ menjadi dalam bentuk list
    -  Mengonversi data series ‘title’ menjadi dalam bentuk list
    -  Mengonversi data series ‘genres’ menjadi dalam bentuk list
@@ -146,7 +172,7 @@ terlihat ada 9724
 Mengubah kolom `movieId`, `title`, dan `genres` dari DataFrame `fix_movie` menjadi tiga list terpisah: `movie_id`, `movie_name`, dan `movie_genre`. Kemudian, dengan mencetak panjang masing-masing list   
 (`len()`), ketiga list tersebut sama-sama berisi 285,762 elemen, yang berarti setiap baris di DataFrame `fix_movie` terwakili secara lengkap dan konsisten di ketiga list tersebut tanpa ada kehilangan data.
 
-5. Membuat DataFrame baru bernama `movie_new`
+6. Membuat DataFrame baru bernama `movie_new`
    
    ![image](https://github.com/user-attachments/assets/e7f508a5-fd0e-4080-9618-71f0764728ed)
 
@@ -164,6 +190,33 @@ Hasil
 
 ![image](https://github.com/user-attachments/assets/ef1de77c-f422-4f54-80a0-244d9cecf0d5)
 
+### **Collaborative Filtering**
+
+1. Menjadikan rating sebagai df
+2. Mengubah menjadi list dan encode proses pada userid
+   - Mengubah userID menjadi list tanpa nilai yang sama
+   - Melakukan encoding userID
+   - Melakukan proses encoding angka ke ke userID
+3. Mengubah menjadi list dan encode proses movieid
+   - Mengubah movieId menjadi list tanpa nilai yang sama
+   - Melakukan proses encoding movieId
+   - Melakukan proses encoding angka ke movieId
+4. Mapping  userId dan movieId ke dataframe yang berkaitan.
+   - Mapping userId ke dataframe genres
+   - Mapping movieD ke dataframe movies
+
+Selanjutnya menghitung dan menampilkan informasi penting tentang data rating film yang sedang kamu proses. Pertama, variabel num_users dan num_movie diisi dengan jumlah user dan film unik berdasarkan hasil encoding yang telah dibuat sebelumnya, yaitu dari dictionary user_to_user_encoded dan movie_encoded_to_movie. Kemudian, kolom baru ratings di DataFrame df dibuat dengan menyalin nilai rating asli dari kolom rating dan mengubahnya menjadi tipe data float32 agar lebih efisien untuk komputasi. Selanjutnya, kode mengambil nilai rating minimum (min_rating) dan maksimum (max_rating) dari kolom rating asli untuk mengetahui rentang skor rating yang diberikan oleh user.
+
+Dari hasil tersebut, dapat disimpulkan:
+
+- Jumlah user unik di dataset adalah 610.
+
+- Jumlah movie unik di dataset adalah 9724.
+
+- Rating terendah yang diberikan user ke movie adalah 0.5.
+
+- Rating tertinggi yang diberikan adalah 5.0.
+
 ## Modeling
 Dalam proyek ini, digunakan dua pendekatan utama untuk membangun sistem rekomendasi film:
 
@@ -175,14 +228,9 @@ Pendekatan ini kemudian digabungkan dalam sistem hybrid untuk meningkatkan akura
 
 ### **1. Content-Based Filtering**
 
-Content-Based Filtering memberikan rekomendasi berdasarkan kesamaan konten film, khususnya genre dan tag. Sistem ini menggunakan representasi teks yang diekstraksi dari data genres dan tags.
-
-Tahapan:
-- Menggabungkan kolom genres dari movies.csv dan tag dari tags.csv menjadi satu kolom deskriptif per film.
-- Menggunakan TF-IDF Vectorizer untuk mengubah teks menjadi vektor fitur.
+Content-Based Filtering memberikan rekomendasi berdasarkan kesamaan konten film, khususnya genre dan tag. Sistem ini menggunakan representasi teks yang diekstraksi dari data genres dan tags. disini Menggunakan TF-IDF Vectorizer
 
 Parameter Utama:
-
 - TF-IDF Vectorizer: stop_words='english'
 - Similarity: Cosine Similarity
   
@@ -238,6 +286,24 @@ Fungsi movie_recommendations ini memberikan rekomendasi film berdasarkan kemirip
 - Menggabungkan judul film rekomendasi dengan info genre dari items.
 - Mengembalikan DataFrame berisi rekomendasi sebanyak k film.
 
+ > Melihat data Moviie Jumanji
+  ```python
+  movie_new[movie_new.movie_name.eq('Jumanji (1995)')]
+  ```
+![image](https://github.com/user-attachments/assets/9b80dc96-44ba-40bc-89e3-596e1b59c88d)
+
+Data tersebut menunjukkan bahwa film "Jumanji (1995)" berada di baris ke-645 Ini berarti film tersebut terdaftar dengan genre petualangan, anak-anak, dan fantasi.
+
+> Hasil Rekomendasi
+  ```python
+    movie_recommendations('Jumanji (1995)')
+  ```
+![image](https://github.com/user-attachments/assets/9f62b6e2-8f17-4ff3-8234-48ae12837353)
+
+ Rekomendasi film yang diberikan untuk "Jumanji (1995)" memang sangat sesuai, karena semuanya punya genre yang mirip, yaitu Adventure|Children|Fantasy. Film-film seperti Indian in the Cupboard, Chronicles of   
+ Narnia, dan Harry Potter sama-sama mengandung unsur petualangan dan fantasi yang cocok untuk penonton anak-anak atau keluarga, persis seperti "Jumanji."
+ Ini menandakan model cosine similarity pada genre berhasil mengelompokkan film-film yang punya kesamaan tema genre secara akurat
+ 
 **Kelebihan:**
 
 - Mampu memberikan rekomendasi meskipun tidak ada data rating pengguna.
@@ -249,7 +315,8 @@ Fungsi movie_recommendations ini memberikan rekomendasi film berdasarkan kemirip
 - Terbatas pada konten yang tersedia (hanya berdasarkan deskripsi film).
 
 
-###**2. Model Development dengan Collaborative Filtering**
+### **2. Model Development dengan Collaborative Filtering**
+
 Collaborative Filtering menggunakan data rating dari pengguna lain untuk mempelajari pola dan preferensi pengguna. Dalam proyek ini, digunakan pendekatan Matrix Factorization dengan TensorFlow/Keras.
 
 **Tahapan:**
@@ -279,15 +346,18 @@ Collaborative Filtering menggunakan data rating dari pengguna lain untuk mempela
      Membuat dictionary yang memetakan setiap userId asli ke angka indeks (encoded userID). Misalnya, userId asli 123 bisa jadi 0, userId 456 jadi 1, dst.
    - user_encoded_to_user = {i: x for i, x in enumerate(user_ids)}
      Membuat dictionary kebalikan, dari angka encoding ke userId asli, agar bisa mengonversi
+     
  2. Encoding movieId:
-   - movie_ids = df['movieId'].unique().tolist()
+    - movie_ids = df['movieId'].unique().tolist()
      Mengambil daftar unik movieId dari data rating.
-   - movie_to_movie_encoded dan movie_encoded_to_movie membuat mapping dua arah antara movieId asli dengan angka indeks yang mewakili setiap film.
+    - movie_to_movie_encoded dan movie_encoded_to_movie membuat mapping dua arah antara movieId asli dengan angka indeks yang mewakili setiap film.
+     
  3. Mapping ke dataframe
-   - df['genres'] = df['userId'].map(user_to_user_encoded)
-     Ini agak aneh karena kamu memetakan kolom userId ke kolom genres di df. Biasanya genres itu terkait dengan film, bukan user.
-   - df['movies'] = df['movieId'].map(movie_to_movie_encoded)
+    - df['genres'] = df['userId'].map(user_to_user_encoded)
+      Ini agak aneh karena kamu memetakan kolom userId ke kolom genres di df. Biasanya genres itu terkait dengan film, bukan user.
+    - df['movies'] = df['movieId'].map(movie_to_movie_encoded)
        Mapping movieId asli ke angka encoded, disimpan di kolom baru movies.
+     
  4. Data Split
      - Membuat variabel x untuk mencocokkan data genres  dan movies menjadi satu value
          
@@ -349,6 +419,11 @@ Setelah itu, film yang belum ditonton diubah menjadi format encoded menggunakan 
 
 ![image](https://github.com/user-attachments/assets/0ea9e652-63c0-46d5-a750-e78c1ab5a2d9)
 
+![image](https://github.com/user-attachments/assets/b55870ef-daba-490e-969b-a4f4aef83db7)
+
+Hasil keluaran ini menunjukkan rekomendasi film untuk pengguna dengan ID 182 berdasarkan rating film yang sudah pernah ditontonnya dan prediksi model untuk film-film yang belum ditonton. Bagian pertama menampilkan lima film favorit pengguna, yaitu film-film dengan rating tertinggi dari riwayat tontonan mereka, seperti *Casino (1995)* dan *Pulp Fiction (1994)*, lengkap dengan genre masing-masing.
+Bagian kedua menampilkan 10 film rekomendasi terbaik yang diprediksi model memiliki potensi disukai oleh pengguna tersebut. Film-film ini beragam dari genre animasi, komedi, drama, hingga dokumenter, seperti *Lesson Faust (1994)* dan *Tea with Mussolini (1999)*. Dengan daftar ini, pengguna bisa mendapatkan pilihan film baru yang sesuai dengan preferensi berdasarkan pola rating sebelumnya.
+
 **Kelebihan:**
 - Mampu mempelajari preferensi pengguna dari data interaksi.
 - Dapat merekomendasikan film yang tidak pernah dilihat sebelumnya oleh pengguna.
@@ -370,24 +445,26 @@ Sementara Content-Based Filtering tetap berguna, terutama untuk pengguna baru, n
 ## Evaluation
 
 1. Model Development dengan Collaborative Filtering
-  > Melihat data Moviie Jumanji
-  ```python
-  movie_new[movie_new.movie_name.eq('Jumanji (1995)')]
-  ```
-![image](https://github.com/user-attachments/assets/9b80dc96-44ba-40bc-89e3-596e1b59c88d)
+   
+   Evaluasi yang digunakan adalah Precision@K
+   
+   ![image](https://github.com/user-attachments/assets/33889c80-3747-49b2-88b5-063fcd0b3663)
 
-Data tersebut menunjukkan bahwa film "Jumanji (1995)" berada di baris ke-645 Ini berarti film tersebut terdaftar dengan genre petualangan, anak-anak, dan fantasi.
+   didapatkan bahwa hasil nya sebagai berikut
+   
+   ![image](https://github.com/user-attachments/assets/6afc3252-e21c-413e-b699-fd6c84b571ac)
 
-> Hasil Rekomendasi
-  ```python
-    movie_recommendations('Jumanji (1995)')
-  ```
-![image](https://github.com/user-attachments/assets/9f62b6e2-8f17-4ff3-8234-48ae12837353)
+   Evaluasi sistem rekomendasi yang dilakukan menggunakan metrik Precision@5 menunjukkan hasil sebesar 0.60. Artinya, dari 5 film yang direkomendasikan oleh sistem berdasarkan film "Jumanji (1995)", terdapat 3 
+   film yang benar-benar relevan atau disukai pengguna. Ini menunjukkan bahwa sistem mampu memberikan rekomendasi yang sesuai dengan preferensi pengguna sebesar 60%. Nilai Precision@5 sebesar 0.60 (60%) dapat dikatakan cukup baik, terutama dalam konteks sistem rekomendasi berbasis konten (Content-Based Filtering) yang hanya menggunakan informasi dari fitur film seperti genre, tanpa mempertimbangkan pola perilaku 
+   pengguna lain.
 
- Rekomendasi film yang diberikan untuk "Jumanji (1995)" memang sangat sesuai, karena semuanya punya genre yang mirip, yaitu Adventure|Children|Fantasy. Film-film seperti Indian in the Cupboard, Chronicles of   
- Narnia, dan Harry Potter sama-sama mengandung unsur petualangan dan fantasi yang cocok untuk penonton anak-anak atau keluarga, persis seperti "Jumanji."
- Ini menandakan model cosine similarity pada genre berhasil mengelompokkan film-film yang punya kesamaan tema genre secara akurat
- 
+  **Tahapan**
+  - Menyusun daftar film yang benar-benar disukai user (ground truth)
+
+  - Menjalankan fungsi rekomendasi → ambil top-K film
+
+  - Evaluasi menggunakan metrik
+    
 2. Model Development dengan Collaborative Filtering
    
 ![image](https://github.com/user-attachments/assets/0c2b4bdc-1596-449e-b5f5-df3a16f7d422)
@@ -402,11 +479,6 @@ RMSE menghitung selisih antara nilai aktual dan prediksi, mengkuadratkannya (aga
 Metrik ini memberi penalti yang lebih besar terhadap kesalahan prediksi yang besar, karena adanya kuadrat pada selisih.
 
 Grafik menunjukkan RMSE model dari epoch 0 hingga 100, dengan garis biru untuk data latih dan oranye untuk data uji. Awalnya, RMSE tinggi (0,26 untuk uji, 0,22 untuk latih), lalu turun drastis hingga epoch 20 (uji ~0,23, latih ~0,19). Setelah itu, RMSE latih stabil di 0,19, sementara RMSE uji tetap di 0,23, menandakan pembelajaran baik tapi ada tanda overfitting.
-
-![image](https://github.com/user-attachments/assets/b55870ef-daba-490e-969b-a4f4aef83db7)
-
-Hasil keluaran ini menunjukkan rekomendasi film untuk pengguna dengan ID 182 berdasarkan rating film yang sudah pernah ditontonnya dan prediksi model untuk film-film yang belum ditonton. Bagian pertama menampilkan lima film favorit pengguna, yaitu film-film dengan rating tertinggi dari riwayat tontonan mereka, seperti *Casino (1995)* dan *Pulp Fiction (1994)*, lengkap dengan genre masing-masing.
-Bagian kedua menampilkan 10 film rekomendasi terbaik yang diprediksi model memiliki potensi disukai oleh pengguna tersebut. Film-film ini beragam dari genre animasi, komedi, drama, hingga dokumenter, seperti *Lesson Faust (1994)* dan *Tea with Mussolini (1999)*. Dengan daftar ini, pengguna bisa mendapatkan pilihan film baru yang sesuai dengan preferensi berdasarkan pola rating sebelumnya.
 
 **Evaluasi Terhadap Business Understanding**
 
