@@ -94,7 +94,7 @@ Beberapa tahapan eksplorasi data telah dilakukan untuk memahami karakteristik da
 
     Pada masing-masing data missing values hanya terdapat pada links.csv yaitu 8 missing values pada tmdbId
 
-**cek duplicated**
+**Cek duplicated**
 
 - Pada masing-masing data set
 
