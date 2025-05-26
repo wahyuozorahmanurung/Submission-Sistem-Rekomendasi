@@ -88,7 +88,7 @@ Beberapa tahapan eksplorasi data telah dilakukan untuk memahami karakteristik da
 
 **Cek Missing Vaues**
 
- 1. Masing-Masing Data
+- Masing-Masing Data
     
     ![image](https://github.com/user-attachments/assets/d6483c51-f660-4931-a929-46bbcdb95c80)
 
@@ -96,7 +96,7 @@ Beberapa tahapan eksplorasi data telah dilakukan untuk memahami karakteristik da
 
 **cek duplicated**
 
- 1. Pada masing-masing data set
+- Pada masing-masing data set
 
   ![image](https://github.com/user-attachments/assets/4e1199a6-dbe8-44df-aaf8-5beca60150e4)
 
