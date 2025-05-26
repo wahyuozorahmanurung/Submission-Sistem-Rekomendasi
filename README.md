@@ -92,7 +92,18 @@ Beberapa tahapan eksplorasi data telah dilakukan untuk memahami karakteristik da
 
     Pada masing-masing data missing values hanya terdapat pada links.csv yaitu 8 missing values pada tmdbId
 
- 2. Pada data merge movie
+**cek duplicated**
+ 1. Pada masing-masing data set
+
+  ![image](https://github.com/user-attachments/assets/4e1199a6-dbe8-44df-aaf8-5beca60150e4)
+
+  Pada masing-masing data set tidak terdapat data duplikat
+
+## Data Preparation
+
+### **Content Based Filtering**
+
+1. Data merge movie
   ```python
    movie_info = pd.concat([links, movies, ratings, tags])
    movie = pd.merge(ratings, movie_info , on='movieId', how='left')
@@ -104,26 +115,16 @@ Pertama saya Menggabungkan beberapa DataFrame (links, movies, ratings, tags) men
 
   ![image](https://github.com/user-attachments/assets/509eadbb-2b4c-4a6d-8dd2-9ca0947d8edb)
 
-**cek duplicated**
- 1. Pada masing-masing data set
+Data preparation sangat penting dalam pipeline machine learning karena memastikan data dalam kondisi bersih, terstruktur, dan siap digunakan oleh algoritma untuk pelatihan dan prediksi. Proses ini dilakukan secara bertahap dan sistematis agar menghasilkan model yang akurat dan dapat diinterpretasikan dengan baik.
 
-  ![image](https://github.com/user-attachments/assets/4e1199a6-dbe8-44df-aaf8-5beca60150e4)
-
-  Pada masing-masing data set tidak terdapat data duplikat
-
- 2. pada data merge movie
+ 2. Duplikat data merge movie
 
   ![image](https://github.com/user-attachments/assets/1b729596-acbf-49b9-a86a-c2e78b28f23a)
 
 movie.duplicated().sum() menghitung jumlah baris duplikat dalam DataFrame movie, yaitu baris-baris yang memiliki semua nilai kolom yang sama persis dengan baris lain. Sementara movie[movie.duplicated()]   
 menampilkan detail baris-baris duplikat tersebut dan terlihat tidak ada duplikat
 
-## Data Preparation
-
-### **Content Based Filtering**
-
-Data preparation sangat penting dalam pipeline machine learning karena memastikan data dalam kondisi bersih, terstruktur, dan siap digunakan oleh algoritma untuk pelatihan dan prediksi. Proses ini dilakukan secara bertahap dan sistematis agar menghasilkan model yang akurat dan dapat diinterpretasikan dengan baik.
-1. Mengatasi Missing Values
+3. Mengatasi Missing Values
    - Mengisi semua kolom numerik yang kosong dengan median
    - Mengisi semua kolom kategorikal (object) yang kosong dengan modus
  cek hasil
@@ -137,7 +138,7 @@ Data preparation sangat penting dalam pipeline machine learning karena memastika
 
 ![image](https://github.com/user-attachments/assets/ce916349-6bea-43f2-8895-7220a5c3ec26)
 
-2. Grouping
+4. Grouping
    
    ```python
      movie.groupby('movieId').sum()
@@ -146,14 +147,14 @@ Data preparation sangat penting dalam pipeline machine learning karena memastika
 
 ![image](https://github.com/user-attachments/assets/6d741ce9-e007-499d-b2dd-cdf32f95f4b3)
 
-3. Merge Data
+5. Merge Data
    Melakukan penggabungan beberapa DataFrame untuk membentuk satu DataFrame movie yang berisi informasi lengkap tentang film
    
  - Gabungkan data movie dan links
  - Gabungkan dengan tags
  - Gabungkan dengan ratings
    
-4. Mengurutkan dataframe movie
+6. Mengurutkan dataframe movie
    
   Mengurutkan DataFrame movie berdasarkan kolom movieId secara ascending (dari kecil ke besar) dan menyimpan hasilnya ke variabel baru fix_movie. Setelah itu, ketika fix_movie dipanggil, akan menampilkan       
   DataFrame yang sudah terurut rapi berdasarkan movieId.
@@ -164,7 +165,7 @@ Data preparation sangat penting dalam pipeline machine learning karena memastika
 
 terlihat ada 9724 
 
-5. Mengoversi menjadi data list
+7. Mengoversi menjadi data list
    -  Mengonversi data series ‘movieId’ menjadi dalam bentuk list
    -  Mengonversi data series ‘title’ menjadi dalam bentuk list
    -  Mengonversi data series ‘genres’ menjadi dalam bentuk list
@@ -172,13 +173,13 @@ terlihat ada 9724
 Mengubah kolom `movieId`, `title`, dan `genres` dari DataFrame `fix_movie` menjadi tiga list terpisah: `movie_id`, `movie_name`, dan `movie_genre`. Kemudian, dengan mencetak panjang masing-masing list   
 (`len()`), ketiga list tersebut sama-sama berisi 285,762 elemen, yang berarti setiap baris di DataFrame `fix_movie` terwakili secara lengkap dan konsisten di ketiga list tersebut tanpa ada kehilangan data.
 
-6. Membuat DataFrame baru bernama `movie_new`
+8. Membuat DataFrame baru bernama `movie_new`
    
    ![image](https://github.com/user-attachments/assets/e7f508a5-fd0e-4080-9618-71f0764728ed)
 
    DataFrame ini menyusun ulang data film dari `fix_movie` dalam format yang lebih sederhana dengan nama kolom yang lebih jelas. Ketika `movie_new` dipanggil, akan menampilkan tabel baru yang memuat data film       lengkap sesuai dengan ketiga list tersebut.
 
-7. Hapus duplikasi berdasarkan movie_name
+9. Hapus duplikasi berdasarkan movie_name
 
    ```python
    movie_new = movie_new.drop_duplicates(subset='movie_name', keep='first')
@@ -416,8 +417,6 @@ Collaborative Filtering menggunakan data rating dari pengguna lain untuk mempela
 memulai dengan membaca data rating film dan memilih secara acak satu pengguna (`user_id`). Kemudian, kode mengambil daftar film yang sudah ditonton oleh pengguna tersebut dan menentukan film yang belum ditonton dengan membandingkan semua film yang ada di dataset dengan film yang sudah dilihat oleh pengguna.
 
 Setelah itu, film yang belum ditonton diubah menjadi format encoded menggunakan peta `movie_to_movie_encoded`, dan `user_id` juga di-encode. Kode kemudian membuat array gabungan antara ID pengguna dan film yang belum ditonton dalam bentuk encoded, yang nantinya digunakan sebagai input untuk model rekomendasi dalam memprediksi film yang mungkin disukai pengguna.
-
-![image](https://github.com/user-attachments/assets/0ea9e652-63c0-46d5-a750-e78c1ab5a2d9)
 
 ![image](https://github.com/user-attachments/assets/b55870ef-daba-490e-969b-a4f4aef83db7)
 
