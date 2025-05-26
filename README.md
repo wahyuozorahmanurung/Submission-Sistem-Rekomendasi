@@ -103,7 +103,7 @@ Beberapa tahapan eksplorasi data telah dilakukan untuk memahami karakteristik da
 
 ### **Content Based Filtering**
 
-1. Data merge movie
+1. Merge movie 
   ```python
    movie_info = pd.concat([links, movies, ratings, tags])
    movie = pd.merge(ratings, movie_info , on='movieId', how='left')
@@ -117,14 +117,21 @@ Pertama saya Menggabungkan beberapa DataFrame (links, movies, ratings, tags) men
 
 Data preparation sangat penting dalam pipeline machine learning karena memastikan data dalam kondisi bersih, terstruktur, dan siap digunakan oleh algoritma untuk pelatihan dan prediksi. Proses ini dilakukan secara bertahap dan sistematis agar menghasilkan model yang akurat dan dapat diinterpretasikan dengan baik.
 
- 2. Duplikat data merge movie
+2. Duplikat data merge movie
 
   ![image](https://github.com/user-attachments/assets/1b729596-acbf-49b9-a86a-c2e78b28f23a)
 
 movie.duplicated().sum() menghitung jumlah baris duplikat dalam DataFrame movie, yaitu baris-baris yang memiliki semua nilai kolom yang sama persis dengan baris lain. Sementara movie[movie.duplicated()]   
 menampilkan detail baris-baris duplikat tersebut dan terlihat tidak ada duplikat
 
-3. Mengatasi Missing Values
+3. Merge Data
+   Melakukan penggabungan beberapa DataFrame untuk membentuk satu DataFrame movie yang berisi informasi lengkap tentang film
+   
+ - Gabungkan data movie dan links
+ - Gabungkan dengan tags
+ - Gabungkan dengan ratings
+   
+4. Mengatasi Missing Values
    - Mengisi semua kolom numerik yang kosong dengan median
    - Mengisi semua kolom kategorikal (object) yang kosong dengan modus
  cek hasil
@@ -138,7 +145,7 @@ menampilkan detail baris-baris duplikat tersebut dan terlihat tidak ada duplikat
 
 ![image](https://github.com/user-attachments/assets/ce916349-6bea-43f2-8895-7220a5c3ec26)
 
-4. Grouping
+5. Grouping
    
    ```python
      movie.groupby('movieId').sum()
@@ -147,13 +154,6 @@ menampilkan detail baris-baris duplikat tersebut dan terlihat tidak ada duplikat
 
 ![image](https://github.com/user-attachments/assets/6d741ce9-e007-499d-b2dd-cdf32f95f4b3)
 
-5. Merge Data
-   Melakukan penggabungan beberapa DataFrame untuk membentuk satu DataFrame movie yang berisi informasi lengkap tentang film
-   
- - Gabungkan data movie dan links
- - Gabungkan dengan tags
- - Gabungkan dengan ratings
-   
 6. Mengurutkan dataframe movie
    
   Mengurutkan DataFrame movie berdasarkan kolom movieId secara ascending (dari kecil ke besar) dan menyimpan hasilnya ke variabel baru fix_movie. Setelah itu, ketika fix_movie dipanggil, akan menampilkan       
@@ -258,8 +258,6 @@ Parameter Utama:
 - Menyimpan hasil similarity matrix untuk memberikan rekomendasi berdasarkan film yang telah ditonton pengguna.
 ```python
   cosine_sim_df = pd.DataFrame(cosine_sim, index=movie_new['movie_name'], columns=movie_new['movie_name'])
-  print('Shape:', cosine_sim_df.shape)
-  cosine_sim_df.sample(5, axis=1).sample(10, axis=0)
 ```
 
 ![image](https://github.com/user-attachments/assets/6c87d6e8-6f5a-4dd3-a7fc-271a325ac807)
@@ -373,26 +371,12 @@ Collaborative Filtering menggunakan data rating dari pengguna lain untuk mempela
       - Membagi menjadi 80% data train dan 20% data validasi
         ```python
             train_indices = int(0.8 * df.shape[0])
-            x_train, x_val, y_train, y_val = (
-                x[:train_indices],
-                x[train_indices:],
-                y[:train_indices],
-                y[train_indices:]
-            )
         ```
 5. mendefinisikan model rekomendasi dengan TensorFlow Keras menggunakan embedding untuk user dan movie. Kelas `RecommenderNet` membuat embedding untuk user, movie, dan bias keduanya. Pada metode `call`,   
    model mengambil embedding user dan movie, menghitung dot product antara keduanya, lalu menambahkan bias user dan movie. Hasilnya diproses dengan fungsi sigmoid untuk menghasilkan prediksi rating yang 
    dinormalisasi antara 0 dan 1. Model ini digunakan untuk memprediksi preferensi user terhadap film.
 6. Menginisialisasi model rekomendasi
-   ```python
-     model = RecommenderNet(num_users, num_movie, 50) # inisialisasi model
-        # model compile
-        model.compile(
-            loss = tf.keras.losses.BinaryCrossentropy(),
-            optimizer = keras.optimizers.Adam(learning_rate=0.001),
-            metrics=[tf.keras.metrics.RootMeanSquaredError()]
-        )
-   ```
+
    menginisialisasi model rekomendasi `RecommenderNet` dengan ukuran embedding 50 untuk user dan movie. Setelah itu, model dikompilasi dengan menggunakan fungsi loss `BinaryCrossentropy` yang cocok untuk 
    output bernilai antara 0 dan 1 (hasil sigmoid). Optimizer yang digunakan adalah Adam dengan learning rate 0.001, yang efektif untuk pelatihan jaringan saraf. Sebagai metrik evaluasi, dipilih Root Mean 
    Squared Error (RMSE) untuk mengukur seberapa dekat prediksi model dengan nilai sebenarnya, sehingga membantu memantau performa selama proses pelatihan.
