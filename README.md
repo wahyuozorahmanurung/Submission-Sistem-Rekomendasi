@@ -312,7 +312,7 @@ Data tersebut menunjukkan bahwa film "Jumanji (1995)" berada di baris ke-645 Ini
 - Mampu memberikan rekomendasi meskipun tidak ada data rating pengguna.
 - Cocok untuk pengguna baru yang belum banyak memberikan rating.
 
-** Kekurangan:**
+**Kekurangan:**
 
 - Tidak mempertimbangkan preferensi pengguna lain.
 - Terbatas pada konten yang tersedia (hanya berdasarkan deskripsi film).
