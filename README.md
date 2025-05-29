@@ -116,8 +116,6 @@ Beberapa tahapan eksplorasi data telah dilakukan untuk memahami karakteristik da
 
 Pertama saya Menggabungkan beberapa DataFrame (links, movies, ratings, tags) menjadi satu DataFrame bernama movie menggunakan pd.concat(). Kemudian, movie_info digabung lagi dengan ratings berdasarkan kolom movieId menggunakan pd.merge() dengan metode join kiri (how='left'). Hasil akhirnya adalah DataFrame movie yang berisi informasi rating yang telah dilengkapi dengan data tambahan dari links, movies, dan tags sesuai dengan movieId. Terlihat ada data yang masih NaN detail pada gambar dibawah ini ketika di merge
 
-  ![image](https://github.com/user-attachments/assets/509eadbb-2b4c-4a6d-8dd2-9ca0947d8edb)
-
 Data preparation sangat penting dalam pipeline machine learning karena memastikan data dalam kondisi bersih, terstruktur, dan siap digunakan oleh algoritma untuk pelatihan dan prediksi. Proses ini dilakukan secara bertahap dan sistematis agar menghasilkan model yang akurat dan dapat diinterpretasikan dengan baik.
 
 2. Duplikat data merge movie
@@ -194,6 +192,22 @@ Hasil
 
 ![image](https://github.com/user-attachments/assets/ef1de77c-f422-4f54-80a0-244d9cecf0d5)
 
+10. TF-IDF
+    
+```python
+  # Inisialisasi TfidfVectorizer
+   tfidf_vectorizer = TfidfVectorizer()
+    
+  # Melakukan perhitungan idf pada data genre
+   tfidf_vectorizer.fit(movie_new['genre'])
+    
+  # Mapping array dari fitur index integer ke fitur nama
+   tfidf_vectorizer.get_feature_names_out()
+```
+
+Kode tersebut menggunakan **TfidfVectorizer** dari scikit-learn untuk mengolah data teks di kolom `genre` pada DataFrame `movie_new`. Pertama, `TfidfVectorizer()` diinisialisasi untuk mengubah teks menjadi representasi TF-IDF (Term Frequency-Inverse Document Frequency). Kemudian, `fit()` diterapkan pada kolom `genre` untuk mempelajari frekuensi kata dan menghitung bobot IDF dari setiap genre yang muncul. Terakhir, `get_feature_names_out()` mengembalikan daftar kata unik (fitur) yang ditemukan dan dipetakan oleh vectorizer—dalam hal ini, kata-kata genre yang diekstrak dari data.
+
+
 ### **Collaborative Filtering**
 
 1. Menjadikan rating sebagai df
@@ -232,22 +246,9 @@ Pendekatan ini kemudian digabungkan dalam sistem hybrid untuk meningkatkan akura
 
 ### **1. Content-Based Filtering**
 
-Content-Based Filtering memberikan rekomendasi berdasarkan kesamaan konten film, khususnya genre dan tag. Sistem ini menggunakan representasi teks yang diekstraksi dari data genres dan tags. disini Menggunakan TF-IDF Vectorizer
+Content-Based Filtering memberikan rekomendasi berdasarkan kesamaan konten film, khususnya genre dan tag. Sistem ini menggunakan representasi teks yang diekstraksi dari data genres dan tags. 
 
-Parameter Utama:
-- TF-IDF Vectorizer: stop_words='english'
-- Similarity: Cosine Similarity
-  
-```python
-  # Inisialisasi TfidfVectorizer
-   tfidf_vectorizer = TfidfVectorizer()
-    
-  # Melakukan perhitungan idf pada data genre
-   tfidf_vectorizer.fit(movie_new['genre'])
-    
-  # Mapping array dari fitur index integer ke fitur nama
-   tfidf_vectorizer.get_feature_names_out()
-```
+
 - Menghitung kemiripan antar film menggunakan Cosine Similarity.
 
 ```python
