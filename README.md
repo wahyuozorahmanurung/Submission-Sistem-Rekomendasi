@@ -45,13 +45,12 @@ Dataset ini berasal dari MovieLens, salah satu dataset paling populer untuk memb
 
 Jumlah Data
 - movies.csv : 9.742 data baris dan 3 kolom film (tidak ada duplikat dan missing values)
-- ratings.csv : 9724 data baris dan 4 data kolom penilaian dari 610 pengguna (tidak ada duplikat dan missing values)
+- ratings.csv : 100,837 data baris dan 4 data kolom penilaian dari 610 pengguna (tidak ada duplikat dan missing values)
 - links.csv : 9.742 relasi baris dan 3 kolom antara MovieLens ID dan IMDb/ TMDb ID (tidak ada duplikat dan 8 missing values pada tmdbId )
-- tags.csv : 1.572 data baris dan 4 kolom tag (kata kunci) yang diberikan oleh pengguna (tidak ada duplikat dan missing values)
+- tags.csv : 3.683 data baris dan 4 kolom tag (kata kunci) yang diberikan oleh pengguna (tidak ada duplikat dan missing values)
 - movies_metadata.csv : Metadata tambahan dari film (genre, sinopsis, dan lainnya) sebanyak 45436 baris dan 19 kolom
   Mising values: belongs_to_collection	40972, homepage	37684, imdb_id	17, original_language	11, overview	954, popularity	5, poster_path	386, production_companies	3, production_countries	3, release_date	87, 
-  revenue	6, runtime	263, spoken_languages	6, status	87, tagline	25054, title	6, video	6, vote_average	6, vote_count	6 (tapi ini tidak digunakan di proyek saya)
-
+  revenue	6, runtime	263, spoken_languages	6, status	87, tagline	25054, title	6, video	6, vote_average	6, vote_count	6.
 
 ### Variabel-variabel pada dataset adalah sebagai berikut:
 1. movies.csv
@@ -235,6 +234,40 @@ Dari hasil tersebut, dapat disimpulkan:
 
 - Rating tertinggi yang diberikan adalah 5.0.
 
+5.  Melakukan encoding userid
+   - user_ids = df['userId'].unique().tolist()
+     Mengambil semua nilai unik dari userId dan mengubahnya menjadi list tanpa duplikasi.
+   - user_to_user_encoded = {x: i for i, x in enumerate(user_ids)}
+     Membuat dictionary yang memetakan setiap userId asli ke angka indeks (encoded userID). Misalnya, userId asli 123 bisa jadi 0, userId 456 jadi 1, dst.
+   - user_encoded_to_user = {i: x for i, x in enumerate(user_ids)}
+     Membuat dictionary kebalikan, dari angka encoding ke userId asli, agar bisa mengonversi
+     
+ 6. Encoding movieId:
+    - movie_ids = df['movieId'].unique().tolist()
+     Mengambil daftar unik movieId dari data rating.
+    - movie_to_movie_encoded dan movie_encoded_to_movie membuat mapping dua arah antara movieId asli dengan angka indeks yang mewakili setiap film.
+     
+ 7. Mapping ke dataframe
+    - df['genres'] = df['userId'].map(user_to_user_encoded)
+      Ini agak aneh karena kamu memetakan kolom userId ke kolom genres di df. Biasanya genres itu terkait dengan film, bukan user.
+    - df['movies'] = df['movieId'].map(movie_to_movie_encoded)
+       Mapping movieId asli ke angka encoded, disimpan di kolom baru movies.
+     
+ 8. Data Split
+     - Membuat variabel x untuk mencocokkan data genres  dan movies menjadi satu value
+         
+       ```python
+         x = df[['genres', 'movies']].values
+       ```
+     - Membuat variabel y untuk membuat ratings dari hasil
+
+        ```python
+           y = df['ratings'].apply(lambda x: (x - min_rating) / (max_rating - min_rating)).values
+        ```
+      - Membagi menjadi 80% data train dan 20% data validasi
+        ```python
+            train_indices = int(0.8 * df.shape[0])
+        ```
 ## Modeling
 Dalam proyek ini, digunakan dua pendekatan utama untuk membangun sistem rekomendasi film:
 
@@ -341,51 +374,17 @@ Collaborative Filtering menggunakan data rating dari pengguna lain untuk mempela
 **Improvement & Tuning:**
 - Tuning jumlah epoch dan embedding size dicoba untuk menemukan trade-off terbaik antara akurasi dan overfitting.
 - Model dievaluasi menggunakan Root Mean Squared Error (RMSE) pada data validasi.
-  
-1. Melakukan encoding userid
-   - user_ids = df['userId'].unique().tolist()
-     Mengambil semua nilai unik dari userId dan mengubahnya menjadi list tanpa duplikasi.
-   - user_to_user_encoded = {x: i for i, x in enumerate(user_ids)}
-     Membuat dictionary yang memetakan setiap userId asli ke angka indeks (encoded userID). Misalnya, userId asli 123 bisa jadi 0, userId 456 jadi 1, dst.
-   - user_encoded_to_user = {i: x for i, x in enumerate(user_ids)}
-     Membuat dictionary kebalikan, dari angka encoding ke userId asli, agar bisa mengonversi
-     
- 2. Encoding movieId:
-    - movie_ids = df['movieId'].unique().tolist()
-     Mengambil daftar unik movieId dari data rating.
-    - movie_to_movie_encoded dan movie_encoded_to_movie membuat mapping dua arah antara movieId asli dengan angka indeks yang mewakili setiap film.
-     
- 3. Mapping ke dataframe
-    - df['genres'] = df['userId'].map(user_to_user_encoded)
-      Ini agak aneh karena kamu memetakan kolom userId ke kolom genres di df. Biasanya genres itu terkait dengan film, bukan user.
-    - df['movies'] = df['movieId'].map(movie_to_movie_encoded)
-       Mapping movieId asli ke angka encoded, disimpan di kolom baru movies.
-     
- 4. Data Split
-     - Membuat variabel x untuk mencocokkan data genres  dan movies menjadi satu value
-         
-       ```python
-         x = df[['genres', 'movies']].values
-       ```
-     - Membuat variabel y untuk membuat ratings dari hasil
-
-        ```python
-           y = df['ratings'].apply(lambda x: (x - min_rating) / (max_rating - min_rating)).values
-        ```
-      - Membagi menjadi 80% data train dan 20% data validasi
-        ```python
-            train_indices = int(0.8 * df.shape[0])
-        ```
-5. mendefinisikan model rekomendasi dengan TensorFlow Keras menggunakan embedding untuk user dan movie. Kelas `RecommenderNet` membuat embedding untuk user, movie, dan bias keduanya. Pada metode `call`,   
+        
+1. mendefinisikan model rekomendasi dengan TensorFlow Keras menggunakan embedding untuk user dan movie. Kelas `RecommenderNet` membuat embedding untuk user, movie, dan bias keduanya. Pada metode `call`,   
    model mengambil embedding user dan movie, menghitung dot product antara keduanya, lalu menambahkan bias user dan movie. Hasilnya diproses dengan fungsi sigmoid untuk menghasilkan prediksi rating yang 
    dinormalisasi antara 0 dan 1. Model ini digunakan untuk memprediksi preferensi user terhadap film.
-6. Menginisialisasi model rekomendasi
+2. Menginisialisasi model rekomendasi
 
    menginisialisasi model rekomendasi `RecommenderNet` dengan ukuran embedding 50 untuk user dan movie. Setelah itu, model dikompilasi dengan menggunakan fungsi loss `BinaryCrossentropy` yang cocok untuk 
    output bernilai antara 0 dan 1 (hasil sigmoid). Optimizer yang digunakan adalah Adam dengan learning rate 0.001, yang efektif untuk pelatihan jaringan saraf. Sebagai metrik evaluasi, dipilih Root Mean 
    Squared Error (RMSE) untuk mengukur seberapa dekat prediksi model dengan nilai sebenarnya, sehingga membantu memantau performa selama proses pelatihan.
 
-7. Proses pelatihan (training) model RecommenderNet
+3. Proses pelatihan (training) model RecommenderNet
 
       ```python
           history = model.fit(
