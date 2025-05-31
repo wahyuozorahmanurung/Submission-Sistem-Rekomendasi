@@ -82,6 +82,32 @@ Menyediakan koneksi antara movieId dengan ID dari basis data film eksternal:
   - movieId: ID film dari MovieLens.
   - imdbId: ID film di IMDb.
   - tmdbId: ID film di The Movie Database (TMDb).
+    
+5. Metadata.csv
+  - adult	: Menunjukkan apakah film untuk dewasa (True/False).
+  - belongs_to_collection :	Informasi jika film bagian dari sebuah koleksi/seri.
+  - budget:	Anggaran produksi film (dalam USD).
+  - genres	: Genre film (misalnya: Action, Drama).
+  - homepage:	URL halaman resmi film (jika ada).
+  -id	ID unik film dalam database.
+  - imdb_id	: ID unik film di IMDb.
+  - original_language :	Bahasa asli film (misal: 'en' untuk English).
+  - original_title :	Judul asli film sebelum diterjemahkan.
+  - overview:	Ringkasan singkat cerita film.
+  - popularity :	Skor popularitas film di TMDB.
+  - poster_path:	Path/URL untuk gambar poster film.
+  - production_companies :	Perusahaan yang memproduksi film.
+  - production_countries :	Negara tempat film diproduksi.
+  - release_date: Tanggal rilis film.
+  - revenue : Pendapatan dari film (dalam USD).
+  - runtime :	Durasi film dalam menit.
+  - spoken_languages :	Bahasa yang digunakan dalam film.
+  - status: Status rilis film (Released, Post Production, dll).
+  - tagline : Slogan promosi film (jika ada).
+  - title :	Judul film yang umum digunakan.
+  - video:	Menunjukkan apakah entri ini adalah video (True/False).
+  - vote_average :	Rata-rata rating film dari pengguna.
+  - vote_count: Jumlah suara/rating yang diterima.
 
 Beberapa tahapan eksplorasi data telah dilakukan untuk memahami karakteristik dataset, antara lain:
 
@@ -113,25 +139,18 @@ Beberapa tahapan eksplorasi data telah dilakukan untuk memahami karakteristik da
   ```
   ![image](https://github.com/user-attachments/assets/fe6d9d75-1ec0-40b4-9cb0-9f3436218764)
 
-Pertama saya Menggabungkan beberapa DataFrame (links, movies, ratings, tags) menjadi satu DataFrame bernama movie menggunakan pd.concat(). Kemudian, movie_info digabung lagi dengan ratings berdasarkan kolom movieId menggunakan pd.merge() dengan metode join kiri (how='left'). Hasil akhirnya adalah DataFrame movie yang berisi informasi rating yang telah dilengkapi dengan data tambahan dari links, movies, dan tags sesuai dengan movieId. Terlihat ada data yang masih NaN detail pada gambar dibawah ini ketika di merge
+Pertama saya Menggabungkan beberapa DataFrame (links, movies, ratings, tags) menjadi satu DataFrame bernama movie_info menggunakan pd.concat(). Kemudian, movie_info digabung lagi dengan ratings berdasarkan kolom movieId menggunakan pd.merge() dengan metode join kiri (how='left'). Hasil akhirnya adalah DataFrame movie yang berisi informasi rating yang telah dilengkapi dengan data tambahan dari links, movies, dan tags sesuai dengan movieId. Terlihat ada data yang masih NaN detail pada gambar dibawah ini ketika di merge
 
 Data preparation sangat penting dalam pipeline machine learning karena memastikan data dalam kondisi bersih, terstruktur, dan siap digunakan oleh algoritma untuk pelatihan dan prediksi. Proses ini dilakukan secara bertahap dan sistematis agar menghasilkan model yang akurat dan dapat diinterpretasikan dengan baik.
 
-2. Duplikat data merge movie
-
-  ![image](https://github.com/user-attachments/assets/1b729596-acbf-49b9-a86a-c2e78b28f23a)
-
-movie.duplicated().sum() menghitung jumlah baris duplikat dalam DataFrame movie, yaitu baris-baris yang memiliki semua nilai kolom yang sama persis dengan baris lain. Sementara movie[movie.duplicated()]   
-menampilkan detail baris-baris duplikat tersebut dan terlihat tidak ada duplikat
-
-3. Merge Data
+2. Merge Data
    Melakukan penggabungan beberapa DataFrame untuk membentuk satu DataFrame movie yang berisi informasi lengkap tentang film
    
  - Gabungkan data movie dan links
  - Gabungkan dengan tags
  - Gabungkan dengan ratings
-   
-4. Mengatasi Missing Values
+
+3. Mengatasi Missing Values
    - Mengisi semua kolom numerik yang kosong dengan median
    - Mengisi semua kolom kategorikal (object) yang kosong dengan modus
  cek hasil
@@ -145,7 +164,7 @@ menampilkan detail baris-baris duplikat tersebut dan terlihat tidak ada duplikat
 
 ![image](https://github.com/user-attachments/assets/ce916349-6bea-43f2-8895-7220a5c3ec26)
 
-5. Grouping
+4. Grouping
    
    ```python
      movie.groupby('movieId').sum()
@@ -153,6 +172,13 @@ menampilkan detail baris-baris duplikat tersebut dan terlihat tidak ada duplikat
   movie.groupby('movieId').sum() mengelompokkan data dalam DataFrame movie berdasarkan kolom movieId, lalu menjumlahkan semua kolom numerik untuk setiap grup (film). Hasilnya adalah DataFrame baru di mana setiap   baris mewakili satu movieId, dan kolom-kolomnya berisi total nilai dari kolom numerik seperti rating
 
 ![image](https://github.com/user-attachments/assets/6d741ce9-e007-499d-b2dd-cdf32f95f4b3)
+
+5. Duplikat data merge movie
+
+  ![image](https://github.com/user-attachments/assets/1b729596-acbf-49b9-a86a-c2e78b28f23a)
+
+movie.duplicated().sum() menghitung jumlah baris duplikat dalam DataFrame movie, yaitu baris-baris yang memiliki semua nilai kolom yang sama persis dengan baris lain. Sementara movie[movie.duplicated()]   
+menampilkan detail baris-baris duplikat tersebut dan terlihat tidak ada duplikat
 
 6. Mengurutkan dataframe movie
    
